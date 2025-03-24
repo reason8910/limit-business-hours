@@ -1,0 +1,44 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "4680fd333f9199f832e786855b20790c"
+application_url = "https://limit-business-hours.fly.dev"
+embedded = false
+name = "Limit Business Hours"
+handle = "limit-business-hours"
+
+[build]
+include_config_on_deploy = true
+automatically_update_urls_on_dev = true
+
+[webhooks]
+api_version = "2025-01"
+
+  [[webhooks.subscriptions]]
+  uri = "https://limit-business-hours.fly.dev/limit-business-hours/grp/cust_data_erasure.php"
+  compliance_topics = [ "customers/redact" ]
+
+  [[webhooks.subscriptions]]
+  uri = "https://limit-business-hours.fly.dev/limit-business-hours/grp/cust_data_request.php"
+  compliance_topics = [ "customers/data_request" ]
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/uninstalled" ]
+  uri = "https://limit-business-hours.fly.dev/limit-business-hours/grp/shop_webhook.php"
+  compliance_topics = [ "shop/redact" ]
+
+[access.admin]
+direct_api_mode = "online"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_script_tags,read_themes,write_script_tags,write_themes"
+
+[auth]
+redirect_urls = [
+  "https://limit-business-hours.fly.dev/auth/callback",
+  "https://limit-business-hours.fly.dev/auth/shopify/callback",
+  "https://limit-business-hours.fly.dev/api/auth/callback"
+]
+
+[pos]
+embedded = false
