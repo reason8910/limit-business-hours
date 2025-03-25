@@ -113,7 +113,7 @@ export default function Index() {
       </TitleBar>
       <BlockStack gap="500">
         <Layout>
-          <Layout.Section variant="oneHalf">
+          <Layout.Section>
             <Card>
               <BlockStack gap="500">
                 <BlockStack gap="200">
@@ -140,9 +140,28 @@ export default function Index() {
                     <li>Easily set and update your business hours at any time.</li>
                     <li>Notify customers of your business hours.</li>
                 </ul>
+                <h3>Getting Started</h3>
+                <ul>
+                    <li>Go to Online Store &gt; Themes &gt; Customise.</li>
+                    <li>In the small left hand side bar, select App Embeds</li>
+                    <li>You will see your new section called <b>Limit Business Hours</b> listed there.</li>
+                </ul>
                   </Text>
                 </BlockStack>
-
+                <InlineStack gap="300">
+                  <Button loading={isLoading} onClick={generateProduct}>
+                    Generate a product
+                  </Button>
+                  {fetcher.data?.product && (
+                    <Button
+                      url={`shopify:admin/products/${productId}`}
+                      target="_blank"
+                      variant="plain"
+                    >
+                      View product
+                    </Button>
+                  )}
+                </InlineStack>
                 {fetcher.data?.product && (
                   <>
                     <Text as="h3" variant="headingMd">
@@ -186,39 +205,104 @@ export default function Index() {
               </BlockStack>
             </Card>
           </Layout.Section>
-          <Layout.Section variant="oneHalf">
+          <Layout.Section variant="oneThird">
             <BlockStack gap="500">
               <Card>
                 <BlockStack gap="200">
                   <Text as="h2" variant="headingMd">
-                  Getting Started
+                    App template specs
                   </Text>
                   <BlockStack gap="200">
-     
+                    <InlineStack align="space-between">
                       <Text as="span" variant="bodyMd">
-                      <ul>
-                          <li>Go to Online Store &gt; Themes &gt; Customise.</li>
-                          <li>In the small left hand side bar, select App Embeds</li>
-                          <li>You will see your new section called <b>"Limit Business Hours"</b> listed there.</li>
-                      </ul>
+                        Framework
                       </Text>
-                      <List>
-                        <List.Item>
-                        Go to Online Store &gt; Themes &gt; Customise.<
-                        </List.Item>
-                        <List.Item>
-                        In the small left hand side bar, select App Embeds
-                        </List.Item>
-                        <List.Item>
-                        You will see your new section called <b>"Limit Business Hours"</b> listed there.<
-                        </List.Item>
-                      </List>
-                      <InlineStack gap="300">
-                        <Button loading={isLoading} onClick={generateProduct}>
-                          Generate a product
-                        </Button>
-                      </InlineStack>
+                      <Link
+                        url="https://remix.run"
+                        target="_blank"
+                        removeUnderline
+                      >
+                        Remix
+                      </Link>
+                    </InlineStack>
+                    <InlineStack align="space-between">
+                      <Text as="span" variant="bodyMd">
+                        Database
+                      </Text>
+                      <Link
+                        url="https://www.prisma.io/"
+                        target="_blank"
+                        removeUnderline
+                      >
+                        Prisma
+                      </Link>
+                    </InlineStack>
+                    <InlineStack align="space-between">
+                      <Text as="span" variant="bodyMd">
+                        Interface
+                      </Text>
+                      <span>
+                        <Link
+                          url="https://polaris.shopify.com"
+                          target="_blank"
+                          removeUnderline
+                        >
+                          Polaris
+                        </Link>
+                        {", "}
+                        <Link
+                          url="https://shopify.dev/docs/apps/tools/app-bridge"
+                          target="_blank"
+                          removeUnderline
+                        >
+                          App Bridge
+                        </Link>
+                      </span>
+                    </InlineStack>
+                    <InlineStack align="space-between">
+                      <Text as="span" variant="bodyMd">
+                        API
+                      </Text>
+                      <Link
+                        url="https://shopify.dev/docs/api/admin-graphql"
+                        target="_blank"
+                        removeUnderline
+                      >
+                        GraphQL API
+                      </Link>
+                    </InlineStack>
                   </BlockStack>
+                </BlockStack>
+              </Card>
+              <Card>
+                <BlockStack gap="200">
+                  <Text as="h2" variant="headingMd">
+                    Next steps
+                  </Text>
+                  <List>
+                    <List.Item>
+                      Build an{" "}
+                      <Link
+                        url="https://shopify.dev/docs/apps/getting-started/build-app-example"
+                        target="_blank"
+                        removeUnderline
+                      >
+                        {" "}
+                        example app
+                      </Link>{" "}
+                      to get started
+                    </List.Item>
+                    <List.Item>
+                      Explore Shopify’s API with{" "}
+                      <Link
+                        url="https://shopify.dev/docs/apps/tools/graphiql-admin-api"
+                        target="_blank"
+                        removeUnderline
+                      >
+                        GraphiQL
+                      </Link>
+                    </List.Item>
+                  </List>
                 </BlockStack>
               </Card>
             </BlockStack>

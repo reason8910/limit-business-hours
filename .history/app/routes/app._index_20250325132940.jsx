@@ -202,23 +202,27 @@ export default function Index() {
                           <li>You will see your new section called <b>"Limit Business Hours"</b> listed there.</li>
                       </ul>
                       </Text>
-                      <List>
-                        <List.Item>
-                        Go to Online Store &gt; Themes &gt; Customise.<
-                        </List.Item>
-                        <List.Item>
-                        In the small left hand side bar, select App Embeds
-                        </List.Item>
-                        <List.Item>
-                        You will see your new section called <b>"Limit Business Hours"</b> listed there.<
-                        </List.Item>
-                      </List>
                       <InlineStack gap="300">
                         <Button loading={isLoading} onClick={generateProduct}>
                           Generate a product
                         </Button>
                       </InlineStack>
                   </BlockStack>
+                </BlockStack>
+              </Card>
+              <Card>
+                <BlockStack gap="200">
+                  <Text as="h2" variant="headingMd">
+                    Next steps
+                  </Text>
+                  <List>
+                    <List.Item>
+                      Build an example app to get started
+                    </List.Item>
+                    <List.Item>
+                      Explore Shopify’s API with GraphiQL
+                    </List.Item>
+                  </List>
                 </BlockStack>
               </Card>
             </BlockStack>

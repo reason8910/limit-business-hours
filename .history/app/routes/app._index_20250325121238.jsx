@@ -21,70 +21,6 @@ export const loader = async ({ request }) => {
   return null;
 };
 
-export const action = async ({ request }) => {
-  const { admin } = await authenticate.admin(request);
-  const color = ["Red", "Orange", "Yellow", "Green"][
-    Math.floor(Math.random() * 4)
-  ];
-  const response = await admin.graphql(
-    `#graphql
-      mutation populateProduct($product: ProductCreateInput!) {
-        productCreate(product: $product) {
-          product {
-            id
-            title
-            handle
-            status
-            variants(first: 10) {
-              edges {
-                node {
-                  id
-                  price
-                  barcode
-                  createdAt
-                }
-              }
-            }
-          }
-        }
-      }`,
-    {
-      variables: {
-        product: {
-          title: `${color} Snowboard`,
-        },
-      },
-    },
-  );
-  const responseJson = await response.json();
-  const product = responseJson.data.productCreate.product;
-  const variantId = product.variants.edges[0].node.id;
-  const variantResponse = await admin.graphql(
-    `#graphql
-    mutation shopifyRemixTemplateUpdateVariant($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
-      productVariantsBulkUpdate(productId: $productId, variants: $variants) {
-        productVariants {
-          id
-          price
-          barcode
-          createdAt
-        }
-      }
-    }`,
-    {
-      variables: {
-        productId: product.id,
-        variants: [{ id: variantId, price: "100.00" }],
-      },
-    },
-  );
-  const variantResponseJson = await variantResponse.json();
-
-  return {
-    product: responseJson.data.productCreate.product,
-    variant: variantResponseJson.data.productVariantsBulkUpdate.productVariants,
-  };
-};
 
 export default function Index() {
   const fetcher = useFetcher();
@@ -113,7 +49,7 @@ export default function Index() {
       </TitleBar>
       <BlockStack gap="500">
         <Layout>
-          <Layout.Section variant="oneHalf">
+          <Layout.Section>
             <Card>
               <BlockStack gap="500">
                 <BlockStack gap="200">
@@ -140,9 +76,28 @@ export default function Index() {
                     <li>Easily set and update your business hours at any time.</li>
                     <li>Notify customers of your business hours.</li>
                 </ul>
+                <h3><strong>Getting Started</strong></h3>
+                <ul>
+                    <li>Go to Online Store &gt; Themes &gt; Customise.</li>
+                    <li>In the small left hand side bar, select App Embeds</li>
+                    <li>You will see your new section called <b>Limit Business Hours</b> listed there.</li>
+                </ul>
                   </Text>
                 </BlockStack>
-
+                <InlineStack gap="300">
+                  <Button loading={isLoading} onClick={generateProduct}>
+                    Generate a product
+                  </Button>
+                  {fetcher.data?.product && (
+                    <Button
+                      url={`shopify:admin/products/${productId}`}
+                      target="_blank"
+                      variant="plain"
+                    >
+                      View product
+                    </Button>
+                  )}
+                </InlineStack>
                 {fetcher.data?.product && (
                   <>
                     <Text as="h3" variant="headingMd">
@@ -186,39 +141,40 @@ export default function Index() {
               </BlockStack>
             </Card>
           </Layout.Section>
-          <Layout.Section variant="oneHalf">
+          <Layout.Section variant="oneThird">
             <BlockStack gap="500">
               <Card>
                 <BlockStack gap="200">
                   <Text as="h2" variant="headingMd">
-                  Getting Started
+                    App template specs
                   </Text>
                   <BlockStack gap="200">
      
                       <Text as="span" variant="bodyMd">
+                      <h3><strong>Getting Started</strong></h3>
                       <ul>
                           <li>Go to Online Store &gt; Themes &gt; Customise.</li>
                           <li>In the small left hand side bar, select App Embeds</li>
-                          <li>You will see your new section called <b>"Limit Business Hours"</b> listed there.</li>
+                          <li>You will see your new section called <b>Limit Business Hours</b> listed there.</li>
                       </ul>
                       </Text>
-                      <List>
-                        <List.Item>
-                        Go to Online Store &gt; Themes &gt; Customise.<
-                        </List.Item>
-                        <List.Item>
-                        In the small left hand side bar, select App Embeds
-                        </List.Item>
-                        <List.Item>
-                        You will see your new section called <b>"Limit Business Hours"</b> listed there.<
-                        </List.Item>
-                      </List>
-                      <InlineStack gap="300">
-                        <Button loading={isLoading} onClick={generateProduct}>
-                          Generate a product
-                        </Button>
-                      </InlineStack>
+     
                   </BlockStack>
+                </BlockStack>
+              </Card>
+              <Card>
+                <BlockStack gap="200">
+                  <Text as="h2" variant="headingMd">
+                    Next steps
+                  </Text>
+                  <List>
+                    <List.Item>
+                      Build an example app to get started
+                    </List.Item>
+                    <List.Item>
+                      Explore Shopify’s API with GraphiQL
+                    </List.Item>
+                  </List>
                 </BlockStack>
               </Card>
             </BlockStack>

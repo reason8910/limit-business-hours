@@ -1,0 +1,183 @@
+{% style %}
+  .open-times {
+    text-align: center;
+    width: 300px;
+    height: auto;
+    border-radius: 150px 150px 0 0;
+    background-color: {{ block.settings.color_background }};
+    color: {{ block.settings.color_text }};
+    font-size: 16px;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    margin-left: -150px;
+    z-index: 9;
+    display: none;
+  }
+  .open-times h3 {
+    text-align: center;
+    color: white;
+    margin-bottom: 5px;
+  }
+{% endstyle %}
+
+{% assign today_date = "now" | date: "%Y-%m-%d" %}
+{% assign shopStart = today_date | append: " " | append: block.settings.open %}
+{% assign shopEnd = today_date | append: " " | append: block.settings.close %}
+
+{% assign dayNow = "now" | date: "%a" %}
+{% assign shopNow = "now" | date: "%Y-%m-%d %H:%M" %}
+
+{% assign closed_days_array = "" %}
+{% assign closed_days = "Mon,Tue,Wed,Thu,Fri,Sat,Sun" | split: "," %}
+{% for day in closed_days %}
+  {% assign setting_key = "closed_" | append: day %}
+  {% if block.settings[setting_key] %}
+    {% if closed_days_array == "" %}
+      {% assign closed_days_array = day %}
+    {% else %}
+      {% assign closed_days_array = closed_days_array | append: ", " | append: day %}
+    {% endif %}
+    {% if dayNow == day %}
+      {% assign is_closed = true %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+
+{% assign closed_days_list = closed_days_array | split: ", " %}
+{% assign last_index = closed_days_list.size | minus: 1 %}
+{% if closed_days_list.size > 1 %}
+  {% assign last_day = closed_days_list[last_index] %}
+  {% assign closed_days_list = closed_days_list | slice: 0, last_index | join: ", " | append: " & " | append: last_day %}
+{% else %}
+  {% assign closed_days_list = closed_days_list | join: "" %}
+{% endif %}
+
+{% if block.settings.store_notice or is_closed %}
+  <div class="open-times">
+    <h3><b>ORDERS CLOSED</b></h3>
+    Open: {{ block.settings.open }} to {{ block.settings.close }}
+    {% if closed_days_list != "" %}<br>Closed: {{ closed_days_list }}{% endif %}
+  </div>
+{% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const targetClasses = ["quick-add", "product-form"];
+    const now = new Date("{{ shopNow }}");    
+    const startDate = new Date("{{ shopStart }}");
+    const endDate = new Date("{{ shopEnd }}");
+    const isClosed = {{ is_closed | default: false }};
+
+    console.log("Start: {{ shopStart }}");
+    console.log("End: {{ shopEnd }}");
+    console.log("Now: {{ shopNow }}");
+    console.log("Closed Today: ", isClosed);
+
+    const isOpen = now >= startDate && now <= endDate && !isClosed;
+
+    targetClasses.forEach(className => {
+        document.querySelectorAll(`.${className}`).forEach(el => {
+            el.style.display = isOpen ? "block" : "none";
+        });
+    });
+    
+    if (!isOpen) {
+        document.querySelector('.open-times').style.display = 'block';
+    }
+});
+</script>
+
+{% schema %}
+{
+  "name": "Limit Business Hours",
+  "target": "body",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Limit Business Hours"
+    },
+    {
+      "type": "text",
+      "id": "open",
+      "label": "Open",
+      "default": "09:00"
+    },
+    {
+      "type": "text",
+      "id": "close",
+      "label": "Close",
+      "default": "17:00"
+    },
+    {
+      "type": "header",
+      "content": "Closed Days"
+    },
+    {
+      "type": "checkbox",
+      "id": "closed_Mon",
+      "label": "Closed on Monday",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "closed_Tue",
+      "label": "Closed on Tuesday",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "closed_Wed",
+      "label": "Closed on Wednesday",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "closed_Thu",
+      "label": "Closed on Thursday",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "closed_Fri",
+      "label": "Closed on Friday",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "closed_Sat",
+      "label": "Closed on Saturday",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "closed_Sun",
+      "label": "Closed on Sunday",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Store notice"
+    },
+    {
+      "type": "checkbox",
+      "id": "store_notice",
+      "label": "Show store notice",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "color_text",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "color_background",
+      "label": "Background color",
+      "default": "#fe0000"
+    }
+  ]
+}
+{% endschema %}
